@@ -4,25 +4,33 @@ var config = require('../config/config');
 
 var async = require('async');
 var lib = require('./lib');
-var pg = require('pg');
+const { Pool } = require('pg');
+var types = require('pg').types;
 var passwordHash = require('password-hash');
 var speakeasy = require('speakeasy');
 var m = require('multiline');
 
-var databaseUrl = config.DATABASE_URL;
+if (!config.DATABASE_HOST || !config.DATABASE_USER || !config.DATABASE_PASSWORD || !config.DATABASE_PORT)
+    throw new Error('must set DATABASE_* environment var');
 
-if (!databaseUrl)
-    throw new Error('must set DATABASE_URL environment var');
+console.log('DATABASE_URL: ', `${config.DATABASE_USER}:${config.DATABASE_PASSWORD}@${config.DATABASE_HOST}:${config.DATABASE_PORT}/bustabitdb`);
 
-console.log('DATABASE_URL: ', databaseUrl);
+const pool = new Pool({
+    user: config.DATABASE_USER,
+    host: config.DATABASE_HOST,
+    database: 'bustabitdb',
+    password: config.DATABASE_PASSWORD,
+    port: config.DATABASE_PORT
+});
 
-pg.types.setTypeParser(20, function(val) { // parse int8 as an integer
+types.setTypeParser(20, function(val) { // parse int8 as an integer
     return val === null ? null : parseInt(val);
 });
 
 // callback is called with (err, client, done)
 function connect(callback) {
-    return pg.connect(databaseUrl, callback);
+    // return pg.connect(databaseUrl, callback);
+    return pool.connect(callback);
 }
 
 function query(query, params, callback) {
@@ -54,9 +62,9 @@ function query(query, params, callback) {
 
 exports.query = query;
 
-pg.on('error', function(err) {
-    console.error('POSTGRES EMITTED AN ERROR', err);
-});
+// pg.on('error', function(err) {
+//     console.error('POSTGRES EMITTED AN ERROR', err);
+// });
 
 
 // runner takes (client, callback)
@@ -70,7 +78,9 @@ function getClient(runner, callback) {
     doIt();
 
     function doIt() {
+        console.log('start connect to db');
         connect(function (err, client, done) {
+            console.log('connect db callback', err);
             if (err) return callback(err);
 
             function rollback(err) {
@@ -120,8 +130,8 @@ exports.createUser = function(username, password, email, ipAddress, userAgent, c
                     if (data.rows[0].count > 0)
                         return callback('USERNAME_TAKEN');
 
-                    client.query('INSERT INTO users(username, email, password) VALUES($1, $2, $3) RETURNING id',
-                            [username, email, hashedPassword],
+                    client.query('INSERT INTO users(username, email, password, balance_satoshis) VALUES($1, $2, $3, $4) RETURNING id',
+                            [username, email, hashedPassword, 1000000],
                             function(err, data) {
                                 if (err)  {
                                     if (err.code === '23505')

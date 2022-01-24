@@ -1,0 +1,24 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: clkao/postgres-plv8:10-2
+    restart: always
+    environment:
+      POSTGRES_USER: bustabit
+      POSTGRES_DB: bustabitdb
+      POSTGRES_PASSWORD: bustabit
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+      # copy the sql script to create tables
+      - ./webserver/server/sql/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    ports:
+      - 5432:5432
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080

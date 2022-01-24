@@ -3,13 +3,26 @@ var uuid = require('uuid');
 
 var async = require('async');
 var lib = require('./lib');
-var pg = require('pg');
+const { Pool } = require('pg');
+var types = require('pg').types;
 var config = require('./config');
 
-if (!config.DATABASE_URL)
-    throw new Error('must set DATABASE_URL environment var');
+if (!config.DATABASE_HOST || !config.DATABASE_USER || !config.DATABASE_PASSWORD || !config.DATABASE_PORT) {
+    console.log(config);
+    throw new Error('must set DATABASE_* environment var');
+}
 
-console.log('DATABASE_URL: ', config.DATABASE_URL);
+console.log('DATABASE_URL: ', `${config.DATABASE_USER}:${config.DATABASE_PASSWORD}@${config.DATABASE_HOST}:${config.DATABASE_PORT}/bustabitdb`);
+
+const pool = new Pool({
+    user: config.DATABASE_USER,
+    host: config.DATABASE_HOST,
+    database: 'bustabitdb',
+    password: config.DATABASE_PASSWORD,
+    port: config.DATABASE_PORT,
+    max: 20,
+    idleTimeoutMillis: 120000
+});
 
 // Increase the client pool size. At the moment the most concurrent
 // queries are performed when auto-bettors join a newly created
@@ -17,7 +30,7 @@ console.log('DATABASE_URL: ', config.DATABASE_URL);
 // of 25-35 players per game, an increase to 20 seems reasonable to
 // ensure that most queries are submitted after around 1 round-trip
 // waiting time or less.
-pg.defaults.poolSize = 20;
+// pg.defaults.poolSize = 20;
 
 // The default timeout is 30s, or the time from 1.00x to 6.04x.
 // Considering that most of the action happens during the beginning
@@ -25,19 +38,20 @@ pg.defaults.poolSize = 20;
 // games only to be reconnected when lots of bets come in again during
 // the next game. Bump the timeout to 2 min (or 1339.43x) to smooth
 // this out.
-pg.defaults.poolIdleTimeout = 120000;
+// pg.defaults.poolIdleTimeout = 120000;
 
-pg.types.setTypeParser(20, function(val) { // parse int8 as an integer
+types.setTypeParser(20, function(val) { // parse int8 as an integer
     return val === null ? null : parseInt(val);
 });
 
-pg.types.setTypeParser(1700, function(val) { // parse numeric as a float
+types.setTypeParser(1700, function(val) { // parse numeric as a float
     return val === null ? null : parseFloat(val);
 });
 
 // callback is called with (err, client, done)
 function connect(callback) {
-    return pg.connect(config.DATABASE_URL, callback);
+    // return pg.connect(config.DATABASE_URL, callback);
+    return pool.connect(callback);
 }
 
 function query(query, params, callback) {
@@ -109,9 +123,9 @@ function getClient(runner, callback) {
 
 exports.query = query;
 
-pg.on('error', function(err) {
-    console.error('POSTGRES EMITTED AN ERROR', err);
-});
+// pg.on('error', function(err) {
+//     console.error('POSTGRES EMITTED AN ERROR', err);
+// });
 
 // runner takes (client, callback)
 
@@ -247,7 +261,7 @@ exports.endGame = function(gameId, bonuses, callback) {
 
           if (userIds.length === 0)
             return callback();
-          
+
           client.query(endGameQuery, [userIds, playIds, bonusesAmounts], function(err, result) {
             if (err)
               return callback(err);

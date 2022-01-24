@@ -24,6 +24,7 @@ var sessionOptions = {
  * Register a user
  */
 exports.register  = function(req, res, next) {
+    console.log('user.register');
     var values = _.merge(req.body, { user: {} });
     var recaptcha = lib.removeNullsAndTrim(req.body['g-recaptcha-response']);
     var username = lib.removeNullsAndTrim(values.user.name);
@@ -59,6 +60,7 @@ exports.register  = function(req, res, next) {
         });
     }
 
+    console.log('user.register db.createUser');
     database.createUser(username, password, email, ipAddress, userAgent, function(err, sessionId) {
         if (err) {
             if (err === 'USERNAME_TAKEN') {

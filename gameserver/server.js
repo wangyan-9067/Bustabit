@@ -57,6 +57,7 @@ async.parallel([
     var lastHash = info.hash;
     assert(typeof lastGameId === 'number');
 
+    console.log('lastGameId & lastHash', lastGameId, lastHash);
     var game = new Game(lastGameId, lastHash, bankroll, gameHistory);
     var chat = new Chat();
 

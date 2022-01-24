@@ -11,13 +11,15 @@
     "binary-search": "^1.2.0",
     "debug": "^2.2.0",
     "lodash": "~2.4.1",
-    "pg": "~3.3.0",
+    "nodemon": "^2.0.15",
+    "pg": "8.7.1",
     "socket.io": "~1.2.0",
     "uuid": "^2.0.1"
   },
   "scripts": {
     "start-dev": "env $(cat .env | xargs) nodemon server.js --use_strict",
-    "start": "node server.js --use_strict"
+    "start": "node server.js --use_strict",
+    "gen_game_hashes": "env $(cat .env | xargs) node populate_hashes.js --use_strict"
   },
   "devDependencies": {}
 }

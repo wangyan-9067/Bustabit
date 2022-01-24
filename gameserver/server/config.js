@@ -4,7 +4,10 @@ module.exports = {
     HTTPS_KEY: process.env.HTTPS_KEY || './key.pem',
     HTTPS_CERT: process.env.HTTPS_CERT || './cert.pem',
     HTTPS_CA: process.env.HTTPS_CA,
-    DATABASE_URL:  process.env.DATABASE_URL || "postgres://localhost:5432/bustabitdb",
+    "DATABASE_HOST": process.env.DATABASE_HOST,
+    "DATABASE_USER": process.env.DATABASE_USER,
+    "DATABASE_PASSWORD": process.env.DATABASE_PASSWORD,
+    "DATABASE_PORT": process.env.DATABASE_PORT,
     ENC_KEY: process.env.ENC_KEY || 'devkey',
     PRODUCTION: process.env.NODE_ENV  === 'production',
 

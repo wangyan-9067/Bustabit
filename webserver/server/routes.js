@@ -26,7 +26,7 @@ function staticPageLogged(page, loggedGoTo) {
         });
     }
 }
- 
+
 function contact(origin) {
     assert(typeof origin == 'string');
 
@@ -84,10 +84,13 @@ function adminRestrict(req, res, next) {
 }
 
 function recaptchaRestrict(req, res, next) {
+  console.log('recaptchaRestrict 1');
   var recaptcha = lib.removeNullsAndTrim(req.body['g-recaptcha-response']);
   if (!recaptcha) {
     return res.send('No recaptcha submitted, go back and try again');
   }
+
+  console.log('recaptchaRestrict 2', config.RECAPTCHA_PRIV_KEY);
 
   recaptchaValidator.callback(config.RECAPTCHA_PRIV_KEY, recaptcha, req.ip, function(err) {
     if (err) {

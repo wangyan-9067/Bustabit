@@ -12,7 +12,10 @@ if(production) {
 
 module.exports = {
   "PRODUCTION": production,
-  "DATABASE_URL": process.env.DATABASE_URL || "postgres://localhost:5432/bustabitdb",
+  "DATABASE_HOST": process.env.DATABASE_HOST,
+  "DATABASE_USER": process.env.DATABASE_USER,
+  "DATABASE_PASSWORD": process.env.DATABASE_PASSWORD,
+  "DATABASE_PORT": process.env.DATABASE_PORT,
   "BIP32_DERIVED": process.env.BIP32_DERIVED_KEY,
   "AWS_SES_KEY": process.env.AWS_SES_KEY,
   "AWS_SES_SECRET": process.env.AWS_SES_SECRET,
