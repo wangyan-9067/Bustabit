@@ -2,7 +2,7 @@
   "name": "MoneyPot",
   "version": "0.0.1",
   "engines": {
-    "node": "~0.10.32"
+    "node": "14.x"
   },
   "dependencies": {
     "CBuffer": "~0.1.4",

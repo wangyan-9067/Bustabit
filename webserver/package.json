@@ -1,7 +1,9 @@
 {
   "name": "Bustabit",
   "version": "2.0.0",
-
+  "engines": {
+    "node": "14.x"
+  },
   "scripts": {
     "start-dev": "env $(cat .env | xargs) nodemon server/index",
     "start": "node server/index"

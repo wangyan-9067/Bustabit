@@ -12,12 +12,12 @@ if (!config.DATABASE_HOST || !config.DATABASE_USER || !config.DATABASE_PASSWORD 
     throw new Error('must set DATABASE_* environment var');
 }
 
-console.log('DATABASE_URL: ', `${config.DATABASE_USER}:${config.DATABASE_PASSWORD}@${config.DATABASE_HOST}:${config.DATABASE_PORT}/bustabitdb`);
+console.log('DATABASE_URL: ', `${config.DATABASE_USER}:${config.DATABASE_PASSWORD}@${config.DATABASE_HOST}:${config.DATABASE_PORT}/${config.DATABASE_NAME}`);
 
 const pool = new Pool({
     user: config.DATABASE_USER,
     host: config.DATABASE_HOST,
-    database: 'bustabitdb',
+    database: config.DATABASE_NAME,
     password: config.DATABASE_PASSWORD,
     port: config.DATABASE_PORT,
     max: 20,

@@ -15,6 +15,7 @@ module.exports = {
   "DATABASE_HOST": process.env.DATABASE_HOST,
   "DATABASE_USER": process.env.DATABASE_USER,
   "DATABASE_PASSWORD": process.env.DATABASE_PASSWORD,
+  "DATABASE_NAME": process.env.DATABASE_NAME || 'bustabitdb',
   "DATABASE_PORT": process.env.DATABASE_PORT,
   "BIP32_DERIVED": process.env.BIP32_DERIVED_KEY,
   "AWS_SES_KEY": process.env.AWS_SES_KEY,

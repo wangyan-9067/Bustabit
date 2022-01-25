@@ -8,6 +8,7 @@ module.exports = {
     "DATABASE_USER": process.env.DATABASE_USER,
     "DATABASE_PASSWORD": process.env.DATABASE_PASSWORD,
     "DATABASE_PORT": process.env.DATABASE_PORT,
+    "DATABASE_NAME": process.env.DATABASE_NAME || 'bustabitdb',
     ENC_KEY: process.env.ENC_KEY || 'devkey',
     PRODUCTION: process.env.NODE_ENV  === 'production',
 
