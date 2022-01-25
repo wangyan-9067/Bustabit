@@ -1,0 +1,11 @@
+setup:
+  addons:
+    - plan: heroku-postgresql:hobby-dev
+      as: DATABASE
+build:
+  docker:
+    game: ./gameserver/Dockerfile
+    web: ./webserver/Dockerfile
+run:
+  game: node server.js
+  web: node server/index.js
